@@ -15,17 +15,30 @@ st.markdown("""
 詐欺の可能性、理由、似た事例まで詳しく解説します。  
 """)
 
-# テキスト入力
+# 入力欄
 user_input = st.text_area("✍️ 副業・ビジネスの内容を入力してください", height=200, placeholder="例：LINEで月30万円稼げると紹介されて…")
+company = st.text_input("🏢 会社名・サービス名（任意）")
+phone = st.text_input("📞 電話番号（任意）")
+sns = st.text_input("📱 SNSアカウントやリンク（任意）")
 
 # 送信ボタン
 if st.button("🔍 判定する"):
     if not user_input.strip():
         st.warning("内容を入力してください。")
     else:
+        # 追加情報を含めたメッセージを生成
+        detailed_input = f"""
+【副業・ビジネスの説明】
+{user_input}
+
+【追加情報】
+会社名・サービス名: {company or '未入力'}
+電話番号: {phone or '未入力'}
+SNSアカウントやリンク: {sns or '未入力'}
+"""
+
         with st.spinner("AIが詐欺の可能性を分析中..."):
             try:
-                # OpenAIに問い合わせ
                 response = openai.chat.completions.create(
                     model="gpt-3.5-turbo",
                     messages=[
@@ -37,15 +50,15 @@ if st.button("🔍 判定する"):
 2. その理由を日本語で解説してください。
 3. 過去に似たような詐欺がある場合、その詐欺の名称（例：マルチ商法、情報商材詐欺など）を挙げてください。
 4. その詐欺の具体的な手口や事例をわかりやすく説明してください。
-5. 最後に、ユーザーに対する注意点やアドバイスがあれば加えてください。"""
+5. 最後に、ユーザーに対する注意点やアドバイスがあれば加えてください。
+"""
                         },
-                        {"role": "user", "content": user_input}
+                        {"role": "user", "content": detailed_input}
                     ]
                 )
 
                 ai_response = response.choices[0].message.content
 
-                # 結果表示
                 st.success("✅ 判定結果")
                 st.markdown(ai_response)
 
