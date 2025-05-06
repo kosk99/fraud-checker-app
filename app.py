@@ -1,10 +1,8 @@
 import openai
 import streamlit as st
-from dotenv import load_dotenv
 import os
 
-# .envからAPIキーを読み込む
-load_dotenv()
+# 環境変数からAPIキーを読み込む
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # ページ設定
